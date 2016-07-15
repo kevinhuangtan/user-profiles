@@ -10,21 +10,17 @@
     <script src="js/build/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
 
-    <!-- Attach firebase mixin -->
-    <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
-
     <!-- REPLACE WITH CODE FROM FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/3.0.5/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
     <script>
       // Initialize Firebase
       var config = {
-        apiKey: "AIzaSyAU7WwWDLCClqH7-XkttUUKg2jsHqOl4Y4",
-        authDomain: "simple-react-firebase-app.firebaseapp.com",
-        databaseURL: "https://simple-react-firebase-app.firebaseio.com",
-        storageBucket: "",
+        apiKey: "AIzaSyDZBZfBDrHh6zYDi6DVnf-ixBdPba0fnKA",
+        authDomain: "users-app-1b0d6.firebaseapp.com",
+        databaseURL: "https://users-app-1b0d6.firebaseio.com",
+        storageBucket: "users-app-1b0d6.appspot.com",
       };
       firebase.initializeApp(config);
-      var database = firebase.database();
     </script>
     <!-- REPLACE WITH CODE FROM FIREBASE -->
 
@@ -32,82 +28,78 @@
   </head>
   <body>
 
-   <!-- HTML web page we built earlier. style is from style.css -->
-    <div id="header">
-       <img id="profileImg" src="http://www.celena.co/images/steven.png"/>
-      <div id="bio">
-        <p id="name">Steven Kang's web page</p>
-        <p>Frontend engineer and iOS developer</p>
-      </div>
+    <!-- https://simple-react-firebase-app.firebaseapp.com/__/auth/handler -->
+
+    <div>
+      <h1>Sign Up</h1>
+      <input type="text" placeholder="email" id="email"/>
+      <input type="password" placeholder="password" id="password"/>
+      <button onclick="signUp()">submit</button>
+      <p id="error"></p>
     </div>
 
-     <!-- the DOM node that React attaches to -->
-     <div id="react-root"></div>
+    <div>
+      <h1>Sign In</h1>
+      <input type="text" placeholder="email" id="si-email"/>
+      <input type="password" placeholder="password" id="si-password"/>
+      <button onclick="signIn()">submit</button>
+      <p id="si-error"></p>
+    </div>
 
-     <!-- Your React Code -->
-     <script type="text/babel">
+    <script>
 
-        var ReactClass = React.createClass({
-          mixins: [ReactFireMixin],
-          getInitialState(){
-            return {
-              visitors: [],
-            }
-          },
-          componentWillMount() {
-            // create/reference firebase db "visitors"
-            var ref = firebase.database().ref("visitors/");
-            // bind contents of db to state "visitors"
-            this.bindAsArray(ref, "visitors");
-          },
-          // add visitor to list of visitors
-          addVisitor(){
-            var newVisitor = this.refs.inputText.value;
-            this.firebaseRefs["visitors"].push({
-              visitor: newVisitor
-            });
+    function signUp(){
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
 
-            // clear input text
-            this.refs.inputText.value = "";
-          },
-          handleKeyPress(e) {
-            if(e.key == "Enter"){
-              this.addVisitor();
-            }
-          },
-          deleteVisitor(object){ // function that deletes a visitor when you click it
-            console.log(object);
-            this.firebaseRefs["visitors"].child(object['.key']).remove(function(error) {
-              if (error) {
-                console.log(error);
-              }
-            });
-          },
-          render(){
-            return(
-              <div id="react-container">
-                <h1>visitors</h1>
-                {this.state.visitors.map(function(object, i){
-                  return (
-                    <p key={i} onClick={()=>this.deleteVisitor(object)}>{object.visitor}</p>
-                  )
-                }, this)}
-                <input
-                  type="text"
-                  placeholder="add your name"
-                  ref="inputText"
-                  onKeyPress={this.handleKeyPress}
-                />
-              </div>
-            )
-          }
-        })
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        document.getElementById('error').innerHTML = errorMessage;
+        // ...
+      });
+    }
 
-        ReactDOM.render(
-          <ReactClass/>,
-          document.getElementById('react-root')
-        );
-      </script>
+
+    function signIn(){
+      var email = document.getElementById("si-email").value;
+      var password = document.getElementById("si-password").value;
+
+      firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorMessage)
+        document.getElementById('si-error').innerHTML = errorMessage;
+
+        // ...
+      });
+    }
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        // User is signed in.
+        console.log('user', user);
+        var name, email, photoUrl, uid;
+
+        if (user != null) {
+          name = user.displayName;
+          email = user.email;
+          photoUrl = user.photoURL;
+          uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
+                           // this value to authenticate with your backend server, if
+                           // you have one. Use User.getToken() instead.
+        }
+        console.log(name, email, photoUrl, uid)
+      } else {
+        console.log('no user');
+        // No user is signed in.
+      }
+    });
+
+    </script>
+
 
   </body>
 </html>
