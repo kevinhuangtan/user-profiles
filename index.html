@@ -10,12 +10,13 @@
     <script src="js/build/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
 
-    <!-- Attach source code for firebase -->
-    <script src="https://www.gstatic.com/firebasejs/3.0.5/firebase.js"></script>
+    <!-- Attach firebase mixin -->
     <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
+
+    <!-- REPLACE WITH CODE FROM FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/3.0.5/firebase.js"></script>
     <script>
       // Initialize Firebase
-      // COPY & PASTE CONFIG CODE HERE
       var config = {
         apiKey: "AIzaSyAU7WwWDLCClqH7-XkttUUKg2jsHqOl4Y4",
         authDomain: "simple-react-firebase-app.firebaseapp.com",
@@ -25,6 +26,9 @@
       firebase.initializeApp(config);
       var database = firebase.database();
     </script>
+    <!-- REPLACE WITH CODE FROM FIREBASE -->
+
+
   </head>
   <body>
 
